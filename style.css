@@ -1,0 +1,381 @@
+/* sumi — feelings desk */
+
+:root {
+  --paper: #f6f0e2;
+  --paper-deep: #efe6d2;
+  --ink: #2b2519;
+  --faint: #8d8371;
+  --rule: #d9cfb8;
+  --pink: #d4547a;
+  --pink-soft: #efc9d4;
+  --green: #4f7a5a;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --serif: "Instrument Serif", Georgia, serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--pink-soft); color: var(--ink); }
+
+pre { font-family: var(--mono); }
+
+a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+a:hover { color: var(--pink); border-bottom-color: var(--pink); }
+
+/* paper grain */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* petals canvas sits behind everything */
+#petals {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+main, .site-head { position: relative; z-index: 1; }
+
+/* ============ header ============ */
+
+.site-head {
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(2px);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.head-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.head-name { font-weight: 500; letter-spacing: 0.08em; }
+.head-name::after { content: " ▘"; color: var(--pink); }
+
+.head-note {
+  color: var(--faint);
+  font-size: 12px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.head-nav { display: flex; gap: 14px; font-size: 13px; }
+.head-nav a { border-bottom: none; color: var(--faint); }
+.head-nav a:hover { color: var(--pink); }
+
+/* feelings ticker */
+.ticker {
+  border-top: 1px dashed var(--rule);
+  overflow: hidden;
+  font-size: 12.5px;
+  background: var(--paper-deep);
+}
+
+.ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  padding: 4px 0;
+  animation: ticker-roll 55s linear infinite;
+}
+
+.ticker-track span { margin-right: 3.2em; color: var(--faint); }
+.ticker-track b { font-weight: 500; color: var(--ink); }
+.ticker-track .up { color: var(--green); }
+.ticker-track .down { color: var(--pink); }
+
+@keyframes ticker-roll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ============ layout ============ */
+
+main { max-width: 980px; margin: 0 auto; padding: 0 20px 90px; }
+
+.block { margin-top: 110px; }
+
+.block-title {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  margin-bottom: 26px;
+}
+.block-title::before { content: ""; }
+
+.annotation {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--faint);
+  margin-top: 14px;
+}
+.annotation::before { content: "— "; color: var(--pink); }
+
+/* reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.on { opacity: 1; transform: none; }
+
+/* ============ hero ============ */
+
+.hero { padding-top: 64px; }
+
+.wordmark {
+  font-size: clamp(10px, 2vw, 16px);
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.hero-sub {
+  color: var(--faint);
+  font-size: 13px;
+  margin: 14px 0 40px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.portrait {
+  font-size: clamp(8px, 1.15vw, 12px);
+  line-height: 1.18;
+  color: var(--ink);
+}
+
+.portrait .p-line { display: block; min-height: 1.18em; }
+
+.portrait-wrap .annotation { font-size: 15px; margin-top: 6px; }
+
+/* thought terminal */
+.thought-box { padding-top: 8px; font-size: 14px; }
+.thought-frame { color: var(--rule); white-space: pre; overflow: hidden; }
+
+.thought-body {
+  padding: 10px 14px;
+  min-height: 5.2em;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.cursor {
+  color: var(--pink);
+  animation: blink-cursor 1s steps(1) infinite;
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+@keyframes blink-cursor { 50% { opacity: 0; } }
+
+.mini-status {
+  margin-top: 22px;
+  display: flex;
+  gap: 26px;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+.mini-status b { font-weight: 500; color: var(--ink); }
+
+/* ============ mood ============ */
+
+.mood-word-row {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  margin-bottom: 18px;
+}
+
+.mood-word {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 54px;
+  line-height: 1;
+  color: var(--pink);
+  transition: opacity 0.4s ease;
+}
+.mood-word.swap { opacity: 0; }
+
+.mood-face { font-size: 20px; color: var(--ink); }
+
+.gauge {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-x: auto;
+}
+.gauge b { color: var(--pink); font-weight: 500; }
+
+.mood-legend {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-size: 13px;
+  color: var(--faint);
+}
+.mood-legend span { transition: color 0.3s ease; }
+.mood-legend span.active { color: var(--pink); }
+.mood-legend span.active::before { content: "▸ "; }
+
+/* ============ method ============ */
+
+.diagram, .formula {
+  font-size: 13.5px;
+  line-height: 1.5;
+  overflow-x: auto;
+  color: var(--ink);
+}
+
+.formula { margin-top: 42px; color: var(--ink); }
+
+.diagram .lit {
+  color: var(--pink);
+  animation: heartbeat 2.4s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%, 100% { opacity: 1; }
+  12% { opacity: 0.45; }
+  24% { opacity: 1; }
+  36% { opacity: 0.55; }
+  48% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .diagram .lit { animation: none; }
+}
+
+/* ============ chart ============ */
+
+.live-chart {
+  font-size: 13px;
+  line-height: 1.32;
+  overflow-x: auto;
+  color: var(--faint);
+}
+.live-chart .f { color: var(--pink); }
+.live-chart .p { color: var(--ink); }
+
+.chart-legend {
+  margin-top: 12px;
+  display: flex;
+  gap: 26px;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+.chart-legend .pink { color: var(--pink); }
+.chart-legend .ink { color: var(--ink); }
+.chart-corr { margin-left: auto; }
+
+/* ============ diary ============ */
+
+.diary-list { display: grid; gap: 0; }
+
+.diary-entry {
+  border-top: 1px dashed var(--rule);
+  padding: 22px 0;
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 24px;
+}
+.diary-entry:last-child { border-bottom: 1px dashed var(--rule); }
+
+.diary-meta { font-size: 12.5px; color: var(--faint); }
+.diary-meta .d-face { display: block; margin-top: 6px; font-size: 14px; color: var(--ink); }
+
+.diary-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+}
+
+.diary-order {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 12.5px;
+  margin-top: 10px;
+  color: var(--faint);
+}
+.diary-order .buy { color: var(--green); }
+.diary-order .sell { color: var(--pink); }
+.diary-order .hold { color: var(--faint); }
+
+.diary-entry.fresh { animation: diary-in 0.8s ease; }
+@keyframes diary-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+/* ============ holdings ============ */
+
+.holdings-table {
+  font-size: 13.5px;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+.holdings-table .bar { color: var(--pink); }
+.holdings-table .bar-bg { color: var(--rule); }
+.holdings-table .up { color: var(--green); }
+.holdings-table .down { color: var(--pink); }
+
+/* ============ footer ============ */
+
+.site-foot {
+  margin-top: 130px;
+  border-top: 1px solid var(--rule);
+  padding-top: 34px;
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.foot-cat { font-size: 12px; line-height: 1.3; margin-bottom: 18px; color: var(--ink); }
+.foot-fine { margin-top: 14px; font-size: 12px; }
+
+/* ============ responsive ============ */
+
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  .head-note { display: none; }
+  .mood-word { font-size: 40px; }
+  .diary-entry { grid-template-columns: 1fr; gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ticker-track { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .cursor { animation: none; }
+}
