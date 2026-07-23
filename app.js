@@ -3,6 +3,9 @@
 const $ = (id) => document.getElementById(id);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+const SERVER = window.SUMI_SERVER || "http://localhost:8787";
+let live = false;
+
 /* ---------------- moods ---------------- */
 
 const MOODS = [
@@ -457,17 +460,20 @@ function setMoodWord(key) {
 }
 
 function tick() {
-  // her feelings drift; sometimes a small school event shoves them
-  state.vel += (Math.random() - 0.5) * 0.05 - state.m * 0.006;
-  state.vel *= 0.93;
-  if (Math.random() < 0.02) state.vel += (Math.random() - 0.5) * 0.3;
-  state.m = Math.max(-1, Math.min(1, state.m + state.vel));
+  // when live, the server owns her feelings and inputs; we only render + local-sim prices/tape
+  if (!live) {
+    // her feelings drift; sometimes a small school event shoves them
+    state.vel += (Math.random() - 0.5) * 0.05 - state.m * 0.006;
+    state.vel *= 0.93;
+    if (Math.random() < 0.02) state.vel += (Math.random() - 0.5) * 0.3;
+    state.m = Math.max(-1, Math.min(1, state.m + state.vel));
+  }
 
   const prev = state.mood;
   state.mood = moodFor(state.m);
 
   // she re-checks one input now and then; good days find good inputs
-  if (Math.random() < 0.04) {
+  if (!live && Math.random() < 0.04) {
     const i = INPUTS[Math.floor(Math.random() * INPUTS.length)];
     const goodOdds = (state.m + 1) / 2;
     const was = i.on;
@@ -564,6 +570,35 @@ function litHeart() {
   pre.innerHTML = pre.innerHTML.replace("( her heart )", '<span class="lit">( her heart )</span>');
 }
 
+/* ---------------- live feed ---------------- */
+
+function applyState(data) {
+  state.m = data.m;
+  state.conviction = data.conviction;
+  state.mood = moodFor(data.m);
+  for (const s of data.inputs) {
+    const local = INPUTS.find((i) => i.label === s.label);
+    if (local) local.on = s.on;
+  }
+  renderInputs();
+}
+
+async function pollState() {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 2000);
+  try {
+    const res = await fetch(SERVER + "/state", { signal: ctrl.signal });
+    if (!res.ok) throw new Error("bad status " + res.status);
+    applyState(await res.json());
+    live = true;
+  } catch {
+    live = false;
+  } finally {
+    clearTimeout(t);
+  }
+  $("status-feed").textContent = live ? "live" : "local";
+}
+
 /* ---------------- boot ---------------- */
 
 state.mood = moodFor(state.m);
@@ -582,3 +617,5 @@ startPetals();
 startReveals();
 nextThought();
 setInterval(tick, 900);
+pollState();
+setInterval(pollState, 3000);

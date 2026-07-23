@@ -1,0 +1,4 @@
+node_modules/
+sumi.db
+sumi.db-wal
+sumi.db-shm

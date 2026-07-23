@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: sumi-site
+    runtime: static
+    staticPublishPath: .
+    buildCommand: ""
+
+  - type: web
+    name: sumi-server
+    runtime: node
+    rootDir: server
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    disk:
+      name: sumi-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: SUMI_DB
+        value: /data/sumi.db
