@@ -38,7 +38,7 @@ const MOODS = [
   },
   {
     key: "wistful", min: 0.0, face: "( ´ ‸ ` )",
-    eyes: "( o )      ( o )", mouth: "  ---  ", blush: "       ",
+    eyes: "( o )      ( o )", mouth: "   -   ", blush: "       ",
     tickerWord: "sighing",
     thoughts: [
       "the window seat does something to my risk tolerance.",
@@ -49,7 +49,7 @@ const MOODS = [
   },
   {
     key: "sunny", min: 0.3, face: "( ^ ‿ ^ )",
-    eyes: "( ^ )      ( ^ )", mouth: " \\___/ ", blush: "  ///  ",
+    eyes: "( ^ )      ( ^ )", mouth: "   ω   ", blush: "  ///  ",
     tickerWord: "hopeful",
     thoughts: [
       "wore the good ribbon today. the market can tell.",
@@ -59,7 +59,7 @@ const MOODS = [
   },
   {
     key: "euphoric", min: 0.66, face: "( ≧ ▽ ≦ )",
-    eyes: "( * )      ( * )", mouth: " \\___/ ", blush: " ///// ",
+    eyes: "( > )      ( < )", mouth: " \\_ω_/ ", blush: " ///// ",
     tickerWord: "in love",
     thoughts: [
       "peach juice AND clear skies. i am buying everything the light touches.",
@@ -366,6 +366,73 @@ function renderHoldings() {
   holdingsEl.innerHTML = head + "\n" + rows.join("\n");
 }
 
+/* ---------------- today's inputs ---------------- */
+
+const INPUTS = [
+  { label: "the sky was clear at lunch", w: 22, on: true },
+  { label: "slept more than seven hours", w: 15, on: true },
+  { label: "peach juice in the vending machine", w: 30, on: false },
+  { label: "forgot her maths homework", w: -9, on: false },
+  { label: "someone was sad on the train", w: -14, on: false },
+];
+
+const inputsEl = $("inputs-panel");
+
+function convictionNow() {
+  const sum = INPUTS.reduce((a, i) => a + (i.on ? i.w : 0), 0);
+  return Math.max(0, Math.min(100, 50 + sum));
+}
+
+function renderInputs() {
+  const W = 45;
+  const bar = "─".repeat(W);
+  const row = (mark, label, val) =>
+    `│ [${mark}] ${label.padEnd(35)}${val.padStart(4)} │`;
+  const lines = [
+    " today, so far",
+    `┌${bar}┐`,
+    ...INPUTS.map((i) =>
+      row(i.on ? "x" : " ", i.label, i.on ? (i.w > 0 ? "+" + i.w : String(i.w)) : "·")),
+    `├${bar}┤`,
+    `│ conviction, right now${" ".repeat(W - 27)}<b>${(convictionNow() + "%").padStart(4)}</b> │`,
+    `└${bar}┘`,
+  ];
+  inputsEl.innerHTML = lines.join("\n");
+}
+
+/* ---------------- the after-school tape ---------------- */
+
+const REASONS = {
+  euphoric: ["the light on the blackboard", "her pen did not smudge", "fireworks, remembered"],
+  sunny: ["the breeze", "warm bread at the school store", "the good ribbon"],
+  wistful: ["the window seat", "an old note, reread", "dust moving through the light"],
+  anxious: ["a door slammed somewhere", "the intercom crackled", "whispers during cleaning duty"],
+  weepy: ["rain, third period", "a wet sock", "the goodbye song"],
+  despairing: ["everything", "the cancelled field trip", "indoor shoes, soaked"],
+};
+
+const tapeEl = $("tape-feed");
+const tape = [];
+
+function clock() {
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, "0");
+  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+
+function addFill() {
+  const side = state.m > 0.25 ? "BUY " : state.m < -0.25 ? "SELL" : "HOLD";
+  const t = TICKERS[Math.floor(Math.random() * TICKERS.length)];
+  const qty = (0.1 + Math.random() * 1.8).toFixed(1);
+  const what = side === "HOLD" ? "everything          " : `${qty} ${t.sym} @ ${t.px.toFixed(2)}`.padEnd(20);
+  const reasons = REASONS[state.mood.key];
+  const reason = reasons[Math.floor(Math.random() * reasons.length)];
+  const cls = side.trim().toLowerCase();
+  tape.push(` ${clock()}  <span class="${cls}">${side}</span>  ${what}  ${reason}`);
+  if (tape.length > 9) tape.shift();
+  tapeEl.innerHTML = tape.join("\n");
+}
+
 /* ---------------- mood tick ---------------- */
 
 const moodWordEl = $("mood-word");
@@ -398,7 +465,18 @@ function tick() {
 
   const prev = state.mood;
   state.mood = moodFor(state.m);
-  state.conviction = Math.round(50 + state.m * 45);
+
+  // she re-checks one input now and then; good days find good inputs
+  if (Math.random() < 0.04) {
+    const i = INPUTS[Math.floor(Math.random() * INPUTS.length)];
+    const goodOdds = (state.m + 1) / 2;
+    const was = i.on;
+    i.on = Math.random() < (i.w > 0 ? goodOdds : 1 - goodOdds);
+    if (i.on !== was) renderInputs();
+  }
+  state.conviction = convictionNow();
+
+  if (Math.random() < 0.12) addFill();
 
   tickPrices();
   pushHistory();
@@ -426,7 +504,7 @@ function startPetals() {
   if (reducedMotion) return;
   const canvas = $("petals");
   const ctx = canvas.getContext("2d");
-  const GLYPHS = ["*", "·", ",", "'", "·", "*"];
+  const GLYPHS = ["·", ",", "'", ".", "·", ","];
   let W, H, dpr;
   const petals = [];
 
@@ -489,9 +567,12 @@ function litHeart() {
 /* ---------------- boot ---------------- */
 
 state.mood = moodFor(state.m);
+state.conviction = convictionNow();
 buildPortrait();
 scheduleBlink();
 renderDiary();
+renderInputs();
+for (let i = 0; i < 4; i++) addFill();
 renderTicker();
 renderGauge();
 renderChart();

@@ -21,7 +21,9 @@
       <a href="#mood">mood</a>
       <a href="#method">method</a>
       <a href="#chart">chart</a>
+      <a href="#tape">tape</a>
       <a href="#diary">diary</a>
+      <a href="#report">report</a>
       <a href="#holdings">holdings</a>
     </nav>
   </div>
@@ -98,6 +100,9 @@ conviction = clamp( 50
      − 14 × (someone was sad on the train)
    , 0, 100 ) %</pre>
     <p class="annotation reveal">peer reviewed by no one. sharpe ratio unknown, vibes ratio excellent.</p>
+
+    <pre class="inputs reveal" id="inputs-panel"></pre>
+    <p class="annotation reveal">inputs are re-checked whenever she looks up from her desk.</p>
   </section>
 
   <!-- ============ chart ============ -->
@@ -112,10 +117,30 @@ conviction = clamp( 50
     <p class="annotation reveal">these are the same line. that is the entire disclosure document.</p>
   </section>
 
+  <!-- ============ tape ============ -->
+  <section id="tape" class="block">
+    <h2 class="block-title reveal">// the after-school tape</h2>
+    <pre class="tape reveal" id="tape-feed"></pre>
+    <p class="annotation reveal">every fill has a reason. none of them are technical.</p>
+  </section>
+
   <!-- ============ diary ============ -->
   <section id="diary" class="block">
     <h2 class="block-title reveal">// trade diary</h2>
     <div id="diary-list" class="diary-list"></div>
+  </section>
+
+  <!-- ============ report card ============ -->
+  <section id="report" class="block">
+    <h2 class="block-title reveal">// term two report card</h2>
+    <pre class="report reveal">
+ mathematics ............ C+   daydreams during compounding
+ literature ............. A    reads candlesticks like poetry
+ home economics ......... A-   snack budget fully deployed
+ physical education ..... B-   fast, but only near the close
+ feelings ............... A+   gifted. genuinely gifted.
+ risk management ........ D    see attached apology essay</pre>
+    <p class="annotation reveal">teacher's note: a pleasure to have in class. please discuss the leverage at home.</p>
   </section>
 
   <!-- ============ holdings ============ -->
@@ -123,6 +148,19 @@ conviction = clamp( 50
     <h2 class="block-title reveal">// holdings</h2>
     <pre class="holdings-table reveal" id="holdings-table"></pre>
     <p class="annotation reveal">position sizing by attachment. she has held AAPLx since the school trip.</p>
+  </section>
+
+  <!-- ============ bag check ============ -->
+  <section id="bag" class="block">
+    <h2 class="block-title reveal">// bag check</h2>
+    <pre class="bag reveal">
+ one (1) mechanical pencil, 0.5mm, lucky
+ a folded print of the AAPLx chart, gone soft at the creases
+ peach juice receipt, kept for sentimental backtesting
+ her student ID. do not look at the photo
+ an umbrella she will forget anyway
+ a note that says 'do not revenge trade' in her own handwriting</pre>
+    <p class="annotation reveal">the note is laminated. it has not worked once.</p>
   </section>
 
   <!-- ============ footer ============ -->
@@ -140,17 +178,19 @@ conviction = clamp( 50
 
 <!-- portrait template: [EYES], [BLUSH], [MOUTH] are swapped by the mood engine -->
 <pre id="portrait-template" hidden>
-              . * .        .
-        *          __..____..__        *
+                        ,-.
+                        )  \
+                       (  ,'
+                   __..____..__
               _,-''           ''-,_
-           ,-'      _______       '-,        .
-    .    ,'    _,-''       ''-,_     ',
+           ,-'      _______       '-,
+         ,'    _,-''       ''-,_     ',
         /    ,'                 ',     \
        /   ,'                     ',    \
       /   /                        \     \
-     ;   /   _                  _   \     ;
-     ;  ;  ,' '.              ,' '.  ;    ;
-    /|  ;  '.__.'            '.__.'  ;    |\
+     ;   /                          \     ;
+     ;  ;    __    __    __    __    ;    ;
+    /|  ;   /  \__/  \__/  \__/  \   ;    |\
    ; |  |                            |    | ;
    | |  |      [EYES]                |    | |
    | |  |                            |    | |
