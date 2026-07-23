@@ -303,12 +303,13 @@ main { max-width: 980px; margin: 0 auto; padding: 0 20px 90px; }
 
 /* ============ report card & bag ============ */
 
-.report, .bag {
+.report, .bag, .soon {
   font-size: 13.5px;
   line-height: 2;
   overflow-x: auto;
   color: var(--ink);
 }
+.soon { line-height: 1.8; }
 
 /* ============ chart ============ */
 
