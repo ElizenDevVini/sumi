@@ -38,7 +38,7 @@ const MOODS = [
   },
   {
     key: "wistful", min: 0.0, face: "( ´ ‸ ` )",
-    eyes: "( o )      ( o )", mouth: "   -   ", blush: "       ",
+    eyes: "( o )      ( o )", mouth: "   ω   ", blush: "       ",
     tickerWord: "sighing",
     thoughts: [
       "the window seat does something to my risk tolerance.",
@@ -49,7 +49,7 @@ const MOODS = [
   },
   {
     key: "sunny", min: 0.3, face: "( ^ ‿ ^ )",
-    eyes: "( ^ )      ( ^ )", mouth: "   ω   ", blush: "  ///  ",
+    eyes: "( ^ )      ( ^ )", mouth: " \\_ω_/ ", blush: "  ///  ",
     tickerWord: "hopeful",
     thoughts: [
       "wore the good ribbon today. the market can tell.",
